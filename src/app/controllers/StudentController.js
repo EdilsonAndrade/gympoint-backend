@@ -52,7 +52,9 @@ class StudentController {
     }
 
     const { email, oldEmail } = req.body;
-    let student = await Student.findOne({ where: { email: oldEmail } });
+    let student = await Student.findOne({
+      where: { email: oldEmail || email },
+    });
 
     if (!student) {
       return res.status(404).json('Student not found');
