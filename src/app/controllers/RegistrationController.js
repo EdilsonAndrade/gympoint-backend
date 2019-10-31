@@ -34,8 +34,36 @@ class RegistrationController {
       plan_id: planId,
       price,
     });
-
+    // TODO send email welcome to the user
     return res.json(registration);
+  }
+
+  async index(req, res) {
+    const { id } = req.query;
+    let registrations = {};
+    if (!id) {
+      registrations = await Registration.findAll();
+    } else {
+      registrations = await Registration.findByPk(id);
+    }
+
+    return res.json(registrations);
+  }
+
+  async delete(req, res) {
+    const id = req.params.registrationId;
+
+    if (!id) {
+      return res.status(400).json({ error: 'Registration id is missed' });
+    }
+
+    const registration = await Registration.findByPk(id);
+
+    if (registration) {
+      await registration.destroy();
+    }
+
+    return res.json({ message: 'Registration deleted' });
   }
 }
 
