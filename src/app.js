@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import 'express-async-errors';
 import Youch from 'youch';
@@ -10,7 +11,7 @@ class App {
     this.server = express();
     this.middlewares();
     this.routes();
-    // this.exceptionHandler();
+    this.exceptionHandler();
   }
 
   middlewares() {

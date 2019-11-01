@@ -2,6 +2,8 @@ import { parseISO, addMonths } from 'date-fns';
 import Registration from '../models/Registration';
 import Student from '../models/Student';
 import Plan from '../models/Plan';
+import Queue from '../../lib/Queue';
+import WelcomeMail from '../jobs/WelcomeMail';
 
 class RegistrationController {
   async store(req, res) {
@@ -34,7 +36,17 @@ class RegistrationController {
       plan_id: planId,
       price,
     });
-    // TODO send email welcome to the user
+
+    Queue.add(WelcomeMail.key, {
+      registration: {
+        endDate: end_date,
+        studentName: existStudent.name,
+        email: existStudent.email,
+        plan: existPlan.title,
+        duration,
+        price,
+      },
+    });
     return res.json(registration);
   }
 
