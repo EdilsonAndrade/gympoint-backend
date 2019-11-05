@@ -3,12 +3,24 @@ import SessionController from './app/controllers/SessionController';
 import StudentController from './app/controllers/StudentController';
 import PlanController from './app/controllers/PlanController';
 import RegistrationController from './app/controllers/RegistrationController';
+import CheckinController from './app/controllers/CheckinController';
+import HelpOrderController from './app/controllers/HelpOrderController';
+import HelpOrderNotAnsweredController from './app/controllers/HelpOrderNotAnsweredController';
 import auth from './app/middlewares/auth';
 
 const routes = new Router();
 
 routes.post('/sessions', SessionController.store);
+routes.post('/students/:studentId/checkins', CheckinController.store);
 
+routes.get('/students/:studentId/checkins', CheckinController.index);
+routes.get('/students/:studentId/help-orders', HelpOrderController.index);
+routes.post('/students/:studentId/help-orders', HelpOrderController.store);
+routes.get('/help-orders', HelpOrderNotAnsweredController.index);
+routes.post(
+  '/help-orders/:helpOrderId/answer',
+  HelpOrderNotAnsweredController.store
+);
 routes.use(auth);
 
 routes.post('/students', StudentController.store);
