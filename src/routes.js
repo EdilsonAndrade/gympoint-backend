@@ -23,6 +23,7 @@ routes.post(
 );
 routes.use(auth);
 
+routes.get('/students/', StudentController.index);
 routes.post('/students', StudentController.store);
 routes.put('/students', StudentController.update);
 routes.post('/plans', PlanController.store);
