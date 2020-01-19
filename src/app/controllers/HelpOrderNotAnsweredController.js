@@ -10,6 +10,12 @@ class HelpOrderNotAnsweredController {
       where: {
         answer: null,
       },
+      include: [
+        {
+          model: Student,
+          attributes: ['email', 'name'],
+        },
+      ],
     });
 
     return res.json(helpOrders);
@@ -19,7 +25,7 @@ class HelpOrderNotAnsweredController {
     const { helpOrderId } = req.params;
     const { answer } = req.body;
     if (!helpOrderId) {
-      return res.status(401).json({ error: 'Help order Id is required' });
+      return res.status(400).json({ error: 'Help order Id is required' });
     }
 
     const schema = Yup.object().shape({
@@ -29,7 +35,7 @@ class HelpOrderNotAnsweredController {
     });
 
     if (!(await schema.isValid(req.body))) {
-      return res.status(401).json({
+      return res.status(400).json({
         error: 'Help order answer must have at least 10 words lenthg',
       });
     }

@@ -4,20 +4,28 @@ import Student from '../models/Student';
 
 class StudentController {
   async index(req, res) {
-    const { name } = req.query;
+    const { name, limit, page } = req.query;
 
     if (!name || name.length < 0) {
+      if (limit) {
+        const students = await Student.findAndCountAll({
+          limit: Number(limit),
+          offset: (page - 1) * limit,
+        });
+        return res.json(students);
+      }
       const students = await Student.findAll();
-
       return res.json(students);
     }
 
-    const students = await Student.findAll({
+    const students = await Student.findAndCountAll({
       where: {
         name: {
           [Op.like]: `%${name}%`,
         },
       },
+      limit: Number(limit),
+      offset: (page - 1) * limit,
     });
     return res.json(students);
   }
@@ -34,14 +42,14 @@ class StudentController {
         .min(45),
       age: Yup.number()
         .required()
-        .min(20),
+        .min(18),
     });
     try {
       if (!(await schema.validate(req.body))) {
         return res.json({ error: 'Validation failed' });
       }
     } catch (error) {
-      return res.json({ error: 'Validation failed' });
+      return res.status(400).json({ error: 'Validation failed' });
     }
 
     const { email } = req.body;
@@ -58,7 +66,7 @@ class StudentController {
     const schema = Yup.object().shape({
       email: Yup.string().required(),
       name: Yup.string(),
-      age: Yup.number().min(20),
+      age: Yup.number().min(18),
       weight: Yup.number().min(45),
       height: Yup.number().min(100),
     });
@@ -88,6 +96,17 @@ class StudentController {
     }
     student = await student.update(req.body);
     return res.json(student);
+  }
+
+  async delete(req, res) {
+    const { id } = req.params;
+    const student = await Student.findByPk(id);
+    if (!student) {
+      return res.status(400).json({ error: 'Aluno não encontrado' });
+    }
+    await student.destroy();
+    const response = await Student.findAndCountAll();
+    return res.json(response);
   }
 }
 

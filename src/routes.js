@@ -26,8 +26,10 @@ routes.use(auth);
 routes.get('/students/', StudentController.index);
 routes.post('/students', StudentController.store);
 routes.put('/students', StudentController.update);
-routes.post('/plans', PlanController.store);
+routes.put('/students', StudentController.update);
+routes.delete('/students/:id', StudentController.delete);
 routes.get('/plans', PlanController.index);
+routes.post('/plans', PlanController.store);
 routes.put('/plans/:planId', PlanController.update);
 routes.delete('/plans/:planId', PlanController.delete);
 routes.post(

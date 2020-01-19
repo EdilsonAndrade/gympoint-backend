@@ -9,7 +9,8 @@ import ChangeRegistrationMail from '../jobs/ChangeRegistrationMail';
 class RegistrationController {
   async store(req, res) {
     const { studentId, planId } = req.params;
-    const start_date = new Date();
+
+    const start_date = new Date(req.body.startDate);
     const existStudent = await Student.findByPk(studentId);
 
     if (!existStudent) {
@@ -55,7 +56,7 @@ class RegistrationController {
           {
             model: Plan,
             as: 'plan',
-            attributes: ['title', 'duration', 'description', 'price'],
+            attributes: ['id', 'title', 'duration', 'description', 'price'],
           },
           {
             model: Student,
@@ -97,12 +98,26 @@ class RegistrationController {
       await registration.destroy();
     }
 
-    return res.json({ message: 'Registration deleted' });
+    const registrations = await Registration.findAll({
+      include: [
+        {
+          model: Plan,
+          as: 'plan',
+          attributes: ['title', 'duration', 'description', 'price'],
+        },
+        {
+          model: Student,
+          as: 'student',
+          attributes: ['id', 'name', 'email'],
+        },
+      ],
+    });
+    return res.json(registrations);
   }
 
   async update(req, res) {
     const id = req.params.registrationId;
-    const { studentId, planId } = req.body;
+    const { studentId, planId, startDate } = req.body;
     if (!id) {
       return res.status(401).json({ error: 'Registration id is mandatory' });
     }
@@ -110,8 +125,7 @@ class RegistrationController {
     const registration = await Registration.findByPk(id);
 
     if (studentId || planId) {
-      const start_date = new Date();
-
+      const start_date = new Date(startDate);
       const existStudent = await Student.findByPk(studentId);
 
       if (!existStudent) {

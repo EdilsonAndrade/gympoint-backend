@@ -5,8 +5,10 @@ class HelpOrderController {
   async index(req, res) {
     const { studentId } = req.params;
     if (!studentId) {
-      return res.status(401).json({ error: 'Student id is required' });
+      const helpOrders = await HelpOrder.findAll();
+      return res.json(helpOrders);
     }
+
     const helpOrders = await HelpOrder.findAll({
       where: {
         student_id: studentId,
