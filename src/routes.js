@@ -21,9 +21,10 @@ routes.post(
   '/help-orders/:helpOrderId/answer',
   HelpOrderNotAnsweredController.store
 );
+routes.get('/students/:studentId', StudentController.index);
 routes.use(auth);
 
-routes.get('/students/', StudentController.index);
+routes.get('/students', StudentController.index);
 routes.post('/students', StudentController.store);
 routes.put('/students', StudentController.update);
 routes.put('/students', StudentController.update);

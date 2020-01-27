@@ -5,7 +5,11 @@ import Student from '../models/Student';
 class StudentController {
   async index(req, res) {
     const { name, limit, page } = req.query;
-
+    const { studentId } = req.params;
+    if (studentId) {
+      const student = await Student.findByPk(studentId);
+      return res.json(student);
+    }
     if (!name || name.length < 0) {
       if (limit) {
         const students = await Student.findAndCountAll({
